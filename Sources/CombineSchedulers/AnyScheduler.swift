@@ -11,6 +11,11 @@ extension Scheduler {
     @inlinable public func eraseToAnyScheduler() -> AnyScheduler<SchedulerTimeType, SchedulerOptions> {
         AnyScheduler(self)
     }
+    
+    /// Wraps this scheduler with a type eraser.
+    @inlinable public var any: AnyScheduler<SchedulerTimeType, SchedulerOptions> {
+        AnyScheduler(self)
+    }
 }
 
 public struct AnyScheduler<SchedulerTimeType, SchedulerOptions> where
