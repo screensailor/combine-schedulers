@@ -127,4 +127,14 @@ extension AnyScheduler: Scheduler {
         self._scheduleOptionsAction(options, action)
     }
 }
+
+public extension Strideable where
+    Stride: SchedulerTimeIntervalConvertible,
+    Stride: ExpressibleByFloatLiteral,
+    Stride.FloatLiteralType == Double
+{
+    @inlinable func advanced(by t: Double) -> Self {
+        advanced(by: Stride(floatLiteral: t))
+    }
+}
 #endif

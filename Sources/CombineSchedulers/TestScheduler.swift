@@ -6,6 +6,37 @@ import Combine
 /// time type and options type.
 public typealias TestSchedulerOf<Scheduler> = TestScheduler<Scheduler.SchedulerTimeType, Scheduler.SchedulerOptions> where Scheduler: Combine.Scheduler
 
+extension Scheduler where
+    SchedulerTimeType == DispatchQueue.SchedulerTimeType,
+    SchedulerOptions == DispatchQueue.SchedulerOptions
+{
+    /// A test scheduler of dispatch queues.
+    @inlinable public static var testScheduler: TestSchedulerOf<Self> {
+        // NB: `DispatchTime(uptimeNanoseconds: 0) == .now())`. Use `1` for consistency.
+        TestScheduler(now: SchedulerTimeType(DispatchTime(uptimeNanoseconds: 1)))
+    }
+}
+
+extension Scheduler where
+    SchedulerTimeType == RunLoop.SchedulerTimeType,
+    SchedulerOptions == RunLoop.SchedulerOptions
+{
+    /// A test scheduler of run loops.
+    @inlinable public static var testScheduler: TestSchedulerOf<Self> {
+        TestScheduler(now: SchedulerTimeType(Date(timeIntervalSince1970: 0)))
+    }
+}
+
+extension Scheduler where
+    SchedulerTimeType == OperationQueue.SchedulerTimeType,
+    SchedulerOptions == OperationQueue.SchedulerOptions
+{
+    /// A test scheduler of operation queues.
+    @inlinable public static var testScheduler: TestSchedulerOf<Self> {
+        TestScheduler(now: SchedulerTimeType(Date(timeIntervalSince1970: 0)))
+    }
+}
+
 public final class TestScheduler<SchedulerTimeType, SchedulerOptions> where
     SchedulerTimeType: Strideable,
     SchedulerTimeType.Stride: SchedulerTimeIntervalConvertible
@@ -125,37 +156,6 @@ extension TestScheduler: Scheduler {
     private func nextSequence() -> UInt {
         self.lastSequence += 1
         return self.lastSequence
-    }
-}
-
-extension Scheduler where
-    SchedulerTimeType == DispatchQueue.SchedulerTimeType,
-    SchedulerOptions == DispatchQueue.SchedulerOptions
-{
-    /// A test scheduler of dispatch queues.
-    @inlinable public static var testScheduler: TestSchedulerOf<Self> {
-        // NB: `DispatchTime(uptimeNanoseconds: 0) == .now())`. Use `1` for consistency.
-        TestScheduler(now: SchedulerTimeType(DispatchTime(uptimeNanoseconds: 1)))
-    }
-}
-
-extension Scheduler where
-    SchedulerTimeType == RunLoop.SchedulerTimeType,
-    SchedulerOptions == RunLoop.SchedulerOptions
-{
-    /// A test scheduler of run loops.
-    @inlinable public static var testScheduler: TestSchedulerOf<Self> {
-        TestScheduler(now: SchedulerTimeType(Date(timeIntervalSince1970: 0)))
-    }
-}
-
-extension Scheduler where
-    SchedulerTimeType == OperationQueue.SchedulerTimeType,
-    SchedulerOptions == OperationQueue.SchedulerOptions
-{
-    /// A test scheduler of operation queues.
-    @inlinable public static var testScheduler: TestSchedulerOf<Self> {
-        TestScheduler(now: SchedulerTimeType(Date(timeIntervalSince1970: 0)))
     }
 }
 #endif
